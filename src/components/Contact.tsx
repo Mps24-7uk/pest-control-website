@@ -9,6 +9,8 @@ const Contact = () => {
     service: '',
     message: ''
   });
+  
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({
@@ -17,7 +19,7 @@ const Contact = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validate required fields
@@ -26,23 +28,33 @@ const Contact = () => {
       return;
     }
     
+    setIsSubmitting(true);
+    
     // Handle form submission here
     console.log('Form submitted:', formData);
     
-    // Create email content
-    const subject = `New Pest Control Inquiry from ${formData.name}`;
-    const emailBody = `
-Name: ${formData.name}
-Email: ${formData.email}
-Phone: ${formData.phone}
-Service: ${formData.service || 'Not specified'}
-Message: ${formData.message || 'No additional message'}
+    try {
+      // Send email using Formspree (free service that sends emails directly to your inbox)
+      const response = await fetch('https://formspree.io/f/xdknqjqn', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          service: formData.service || 'Not specified',
+          message: formData.message || 'No additional message',
+          _replyto: formData.email,
+          _subject: `New Pest Control Inquiry from ${formData.name}`,
+          _to: 'mps24.7uk@gmail.com',
+        }),
+      });
 
-This inquiry was submitted through the website contact form.
-    `.trim();
-    
-    // Create WhatsApp message
-    const whatsappMessage = `
+      if (response.ok) {
+        // Also open WhatsApp as backup
+        const whatsappMessage = `
 *New Pest Control Inquiry*
 
 👤 *Name:* ${formData.name}
@@ -52,33 +64,53 @@ This inquiry was submitted through the website contact form.
 💬 *Message:* ${formData.message || 'No additional message'}
 
 Sent from website contact form
-    `.trim();
-    
-    // Open email client
-    const emailTo = 'mps24.7uk@gmail.com';
-    const emailUrl = `mailto:${emailTo}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
-    
-    // Open WhatsApp
-    const whatsappNumber = '919639793193'; // Phone number without + and spaces
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
-    
-    // Open both email and WhatsApp
-    window.open(emailUrl, '_blank');
-    setTimeout(() => {
-      window.open(whatsappUrl, '_blank');
-    }, 1000); // Delay WhatsApp by 1 second
-    
-    // Show success message
-    alert('Thank you for your message! We\'ll contact you soon. Your email client and WhatsApp should open shortly.');
-    
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      service: '',
-      message: ''
-    });
+        `.trim();
+        
+        const whatsappNumber = '919639793193';
+        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
+        
+        // Open WhatsApp
+        window.open(whatsappUrl, '_blank');
+        
+        // Show success message
+        alert('Thank you for your message! We have received your inquiry and will contact you soon. WhatsApp will also open for immediate contact.');
+        
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          service: '',
+          message: ''
+        });
+      } else {
+        throw new Error('Failed to send message');
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      
+      // Fallback to mailto if Formspree fails
+      const subject = `New Pest Control Inquiry from ${formData.name}`;
+      const emailBody = `
+Name: ${formData.name}
+Email: ${formData.email}
+Phone: ${formData.phone}
+Service: ${formData.service || 'Not specified'}
+Message: ${formData.message || 'No additional message'}
+
+This inquiry was submitted through the website contact form.
+      `.trim();
+      
+      const emailTo = 'mps24.7uk@gmail.com';
+      const emailUrl = `mailto:${emailTo}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+      
+      // Open email client as fallback
+      window.open(emailUrl, '_blank');
+      
+      alert('There was an issue with our contact form. Your email client will open with a pre-filled message. Please send it manually.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -146,7 +178,7 @@ Sent from website contact form
           {/* Contact Form */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-xl p-8 shadow-lg">
-              <h3 className="text-2xl font-bold text-gray-800 mb-6">Request Free Inspection</h3>
+              <h3 className="text-2xl font-bold text-gray-800 mb-6">Request Inspection</h3>
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
@@ -239,10 +271,15 @@ Sent from website contact form
 
                 <button
                   type="submit"
-                  className="w-full bg-green-600 text-white py-4 px-8 rounded-lg font-semibold hover:bg-green-700 transition-all duration-200 transform hover:scale-[1.02] flex items-center justify-center space-x-2"
+                  disabled={isSubmitting}
+                  className={`w-full py-4 px-8 rounded-lg font-semibold transition-all duration-200 transform hover:scale-[1.02] flex items-center justify-center space-x-2 ${
+                    isSubmitting 
+                      ? 'bg-gray-400 cursor-not-allowed' 
+                      : 'bg-green-600 hover:bg-green-700 text-white'
+                  }`}
                 >
                   <Send className="h-5 w-5" />
-                  <span>Send Message & Get Free Quote</span>
+                  <span>{isSubmitting ? 'Sending...' : 'Send Message & Get Quote'}</span>
                 </button>
               </form>
             </div>
