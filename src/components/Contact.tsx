@@ -33,28 +33,6 @@ const Contact = () => {
     // Handle form submission here
     console.log('Form submitted:', formData);
     
-    // Create a comprehensive email message
-    const subject = `🐛 New Pest Control Inquiry from ${formData.name}`;
-    const emailBody = `
-PEST CONTROL INQUIRY
-====================
-
-Customer Details:
-👤 Name: ${formData.name}
-📧 Email: ${formData.email}
-📱 Phone: ${formData.phone}
-
-Service Request:
-🛠️ Service Needed: ${formData.service || 'Not specified'}
-
-Message:
-💬 ${formData.message || 'No additional message provided'}
-
----
-📅 Submitted: ${new Date().toLocaleString()}
-🌐 Source: Website Contact Form
-    `.trim();
-    
     // Create WhatsApp message
     const whatsappMessage = `
 🐛 *NEW PEST CONTROL INQUIRY*
@@ -72,22 +50,15 @@ Message:
     setIsSubmitting(true);
     
     try {
-      // Primary method: Open email with pre-filled content
-      const emailTo = 'mps24.7uk@gmail.com';
-      const emailUrl = `mailto:${emailTo}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
-      
-      // Secondary method: Open WhatsApp
-      const whatsappNumber = '919639793193';
+      // Send to WhatsApp only
+      const whatsappNumber = '918077823504'; // Updated WhatsApp number without + and spaces
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
       
-      // Open both email and WhatsApp
-      window.open(emailUrl, '_blank');
-      setTimeout(() => {
-        window.open(whatsappUrl, '_blank');
-      }, 1000);
+      // Open WhatsApp
+      window.open(whatsappUrl, '_blank');
       
       // Show success message
-      alert('✅ Thank you for your inquiry!\n\n📧 Your email client will open with a pre-filled message to send.\n📱 WhatsApp will also open for immediate contact.\n\nPlease send the email to complete your request.');
+      alert('✅ Thank you for your inquiry!\n\n� WhatsApp will open with your message pre-filled.\n\nPlease send the message to complete your request.');
       
       // Reset form
       setFormData({
@@ -100,7 +71,7 @@ Message:
       
     } catch (error) {
       console.error('Error processing form:', error);
-      alert('❌ There was an issue processing your request. Please try again or contact us directly at +91-9639793193.');
+      alert('❌ There was an issue processing your request. Please try again or contact us directly at +91-8077823504.');
     } finally {
       setIsSubmitting(false);
     }
@@ -128,7 +99,7 @@ Message:
                   <Phone className="h-6 w-6 text-green-600 mt-1" />
                   <div>
                     <h4 className="font-semibold text-gray-800">Phone</h4>
-                    <p className="text-gray-600">+91-9639793193</p>
+                    <p className="text-gray-600">+91-8077823504</p>
                     <p className="text-sm text-gray-500">24/7 Emergency Line</p>
                   </div>
                 </div>
@@ -272,7 +243,7 @@ Message:
                   }`}
                 >
                   <Send className="h-5 w-5" />
-                  <span>{isSubmitting ? 'Sending...' : 'Send Message & Get Quote'}</span>
+                  <span>{isSubmitting ? 'Sending...' : 'Send via WhatsApp'}</span>
                 </button>
               </form>
             </div>
