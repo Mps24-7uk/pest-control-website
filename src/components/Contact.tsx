@@ -33,81 +33,74 @@ const Contact = () => {
     // Handle form submission here
     console.log('Form submitted:', formData);
     
-    try {
-      // Send email using Formspree (free service that sends emails directly to your inbox)
-      const response = await fetch('https://formspree.io/f/xdknqjqn', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          service: formData.service || 'Not specified',
-          message: formData.message || 'No additional message',
-          _replyto: formData.email,
-          _subject: `New Pest Control Inquiry from ${formData.name}`,
-          _to: 'mps24.7uk@gmail.com',
-        }),
-      });
+    // Create a comprehensive email message
+    const subject = `🐛 New Pest Control Inquiry from ${formData.name}`;
+    const emailBody = `
+PEST CONTROL INQUIRY
+====================
 
-      if (response.ok) {
-        // Also open WhatsApp as backup
-        const whatsappMessage = `
-*New Pest Control Inquiry*
+Customer Details:
+👤 Name: ${formData.name}
+📧 Email: ${formData.email}
+📱 Phone: ${formData.phone}
+
+Service Request:
+🛠️ Service Needed: ${formData.service || 'Not specified'}
+
+Message:
+💬 ${formData.message || 'No additional message provided'}
+
+---
+📅 Submitted: ${new Date().toLocaleString()}
+🌐 Source: Website Contact Form
+    `.trim();
+    
+    // Create WhatsApp message
+    const whatsappMessage = `
+🐛 *NEW PEST CONTROL INQUIRY*
 
 👤 *Name:* ${formData.name}
 📧 *Email:* ${formData.email}
 📱 *Phone:* ${formData.phone}
 🛠️ *Service:* ${formData.service || 'Not specified'}
-💬 *Message:* ${formData.message || 'No additional message'}
+💬 *Message:* ${formData.message || 'No message'}
 
-Sent from website contact form
-        `.trim();
-        
-        const whatsappNumber = '919639793193';
-        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
-        
-        // Open WhatsApp
-        window.open(whatsappUrl, '_blank');
-        
-        // Show success message
-        alert('Thank you for your message! We have received your inquiry and will contact you soon. WhatsApp will also open for immediate contact.');
-        
-        // Reset form
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          service: '',
-          message: ''
-        });
-      } else {
-        throw new Error('Failed to send message');
-      }
-    } catch (error) {
-      console.error('Error sending message:', error);
-      
-      // Fallback to mailto if Formspree fails
-      const subject = `New Pest Control Inquiry from ${formData.name}`;
-      const emailBody = `
-Name: ${formData.name}
-Email: ${formData.email}
-Phone: ${formData.phone}
-Service: ${formData.service || 'Not specified'}
-Message: ${formData.message || 'No additional message'}
-
-This inquiry was submitted through the website contact form.
-      `.trim();
-      
+📅 *Time:* ${new Date().toLocaleString()}
+🌐 *Source:* Website Contact Form
+    `.trim();
+    
+    setIsSubmitting(true);
+    
+    try {
+      // Primary method: Open email with pre-filled content
       const emailTo = 'mps24.7uk@gmail.com';
       const emailUrl = `mailto:${emailTo}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
       
-      // Open email client as fallback
-      window.open(emailUrl, '_blank');
+      // Secondary method: Open WhatsApp
+      const whatsappNumber = '919639793193';
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
       
-      alert('There was an issue with our contact form. Your email client will open with a pre-filled message. Please send it manually.');
+      // Open both email and WhatsApp
+      window.open(emailUrl, '_blank');
+      setTimeout(() => {
+        window.open(whatsappUrl, '_blank');
+      }, 1000);
+      
+      // Show success message
+      alert('✅ Thank you for your inquiry!\n\n📧 Your email client will open with a pre-filled message to send.\n📱 WhatsApp will also open for immediate contact.\n\nPlease send the email to complete your request.');
+      
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        service: '',
+        message: ''
+      });
+      
+    } catch (error) {
+      console.error('Error processing form:', error);
+      alert('❌ There was an issue processing your request. Please try again or contact us directly at +91-9639793193.');
     } finally {
       setIsSubmitting(false);
     }
