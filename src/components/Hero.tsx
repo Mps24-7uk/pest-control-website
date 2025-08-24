@@ -1,24 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, Shield, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 
+// Import images from src directory so Vite can process them with correct base path
+import imageA from '../assets/images/home/a.png';
+import imageB from '../assets/images/home/b.png';
+import imageC from '../assets/images/home/c.png';
+import imageD from '../assets/images/home/d.png';
+
 const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   
     const pestControlImages = [
       {
-        url: "/assets/images/home/a.png",
+        url: imageA,
         alt: "Professional pest control technician spraying for insects"
       },
       {
-        url: "/assets/images/home/b.png",
+        url: imageB,
         alt: "Pest control equipment and safety gear"
       },
       {
-        url: "/assets/images/home/c.png",
+        url: imageC,
         alt: "Home inspection for pest control treatment"
       },
       {
-        url: "/assets/images/home/d.png",
+        url: imageD,
         alt: "Professional exterminator treating residential property"
       }
     ];
@@ -96,7 +102,7 @@ const Hero = () => {
                     const target = e.target as HTMLImageElement;
                     console.error('Hero image failed to load:', image.url, e);
                     console.log('Trying fallback image...');
-                    target.src = "/assets/images/home/a.png";
+                    target.src = imageA;
                   }}
                   onLoad={() => {
                     console.log('Hero image loaded successfully:', image.url);

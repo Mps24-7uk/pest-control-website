@@ -1,10 +1,11 @@
 import React from 'react';
 import { Award, Users, CheckCircle, Clock } from 'lucide-react';
 
-const About = () => {
-  const aboutImageUrl = "/assets/images/about/a.png";
-  const fallbackImageUrl = "/assets/images/home/a.png";
+// Import images from src directory so Vite can process them with correct base path
+import aboutImage from '../assets/images/about/a.png';
+import fallbackImage from '../assets/images/home/a.png';
 
+const About = () => {
   const stats = [
     { icon: Users, number: "10,000+", label: "Satisfied Customers" },
     { icon: CheckCircle, number: "99%", label: "Success Rate" },
@@ -56,17 +57,17 @@ const About = () => {
 
           <div className="relative">
                 <img 
-                  src={aboutImageUrl} 
+                  src={aboutImage} 
                   alt="Professional pest control team" 
                   className="rounded-2xl shadow-xl w-full h-96 object-cover"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
-                    console.error('About image failed to load:', aboutImageUrl, e);
+                    console.error('About image failed to load:', aboutImage, e);
                     console.log('Trying fallback image...');
-                    target.src = fallbackImageUrl;
+                    target.src = fallbackImage;
                   }}
                   onLoad={() => {
-                    console.log('About image loaded successfully:', aboutImageUrl);
+                    console.log('About image loaded successfully:', aboutImage);
                   }}
                 />            <div className="absolute -bottom-8 left-8 right-8">
               <div className="bg-white rounded-xl shadow-lg p-6">
