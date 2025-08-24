@@ -5,7 +5,10 @@ const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   
   // Use base path for GitHub Pages
-  const basePath = '/pest-control-website';
+    // GitHub Pages base path configuration
+  const basePath = window.location.hostname === 'localhost' 
+    ? '' 
+    : '/pest-control-website';
   
   const pestControlImages = [
     {
