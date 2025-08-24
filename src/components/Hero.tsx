@@ -1,30 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, Shield, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 
+// Import images from src directory so Vite can process them with correct base path
+import imageA from '../assets/images/home/a.png';
+import imageB from '../assets/images/home/b.png';
+import imageC from '../assets/images/home/c.png';
+import imageD from '../assets/images/home/d.png';
+
 const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   
-  // Use base path for GitHub Pages
-    // GitHub Pages base path configuration
-  const basePath = window.location.hostname === 'localhost' 
-    ? '' 
-    : '/pest-control-website';
-  
   const pestControlImages = [
     {
-      url: `${basePath}/assets/images/home/a.png`,
+      url: imageA,
       alt: "Professional pest control technician spraying for insects"
     },
     {
-      url: `${basePath}/assets/images/home/b.png`,
+      url: imageB,
       alt: "Pest control equipment and safety gear"
     },
     {
-      url: `${basePath}/assets/images/home/c.png`,
+      url: imageC,
       alt: "Home inspection for pest control treatment"
     },
     {
-      url: `${basePath}/assets/images/home/d.png`,
+      url: imageD,
       alt: "Professional exterminator treating residential property"
     }
   ];
@@ -104,7 +104,7 @@ const Hero = () => {
                     console.log('Trying fallback image...');
                     console.log('Current window.location:', window.location.href);
                     console.log('Image URL being used:', image.url);
-                    target.src = `${basePath}/assets/images/home/a.png`;
+                    target.src = imageA;
                   }}
                   onLoad={() => {
                     console.log('Hero image loaded successfully:', image.url);
